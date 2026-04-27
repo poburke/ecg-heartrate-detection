@@ -64,12 +64,14 @@
       padding: 4rem 1.5rem 3rem;
     }
 
-    .publication-title {
+    .publication-title,
+    .publication-title.title,
+    h1.publication-title {
       font-family: var(--serif);
       font-size: 2.2rem !important;
       font-weight: 700;
       line-height: 1.25;
-      color: #ffffff;
+      color: #ffffff !important;
       letter-spacing: -0.01em;
     }
 
@@ -294,20 +296,6 @@
       font-size: 1.05rem;
     }
 
-    .best-badge {
-      display: inline-block;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: var(--crimson);
-      color: white;
-      border-radius: 2px;
-      padding: 0.1rem 0.4rem;
-      margin-left: 0.5rem;
-      vertical-align: middle;
-    }
-
     /* ── POSTER ── */
     .poster-section {
       background: var(--warm-white);
@@ -409,7 +397,7 @@
 
             <div class="publication-links">
               <span class="link-block">
-                <a href="https://github.com/YOUR_REPO_HERE" target="_blank"
+                <a href="https://github.com/poburke/ecg-heartrate-detection" target="_blank"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fab fa-github"></i></span>
                   <span>Code</span>
@@ -450,31 +438,30 @@
         </p>
       </div>
 
-      <!-- TODO: Replace placeholder with carousel once images are ready -->
-      <div class="carousel-placeholder">
-        <i class="fas fa-images"></i>
-        <span>Result images coming soon</span>
-      </div>
-
-      <!--
-      Uncomment and populate when images are ready:
-      <section class="hero is-small">
-        <div class="hero-body">
+      <section class="hero is-small" style="margin-top: 1.5rem;">
+        <div class="hero-body" style="padding: 0;">
           <div class="container">
             <div id="carousel-method1" class="carousel results-carousel">
-              <div class="item">
-                <img src="static/images/method1_1.jpg" alt="End-to-end method result 1" loading="lazy"/>
-                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              <div class="item has-text-centered">
+                <img src="static/images/e2e_training_curves.png" alt="Training curves: MAE and RMSE over epochs" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Training and validation MAE/RMSE over 68 epochs.</h2>
               </div>
-              <div class="item">
-                <img src="static/images/method1_2.jpg" alt="End-to-end method result 2" loading="lazy"/>
-                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              <div class="item has-text-centered">
+                <img src="static/images/e2e_scatter.png" alt="Estimated vs true BPM scatter plot" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Estimated vs. true BPM on the validation set.</h2>
+              </div>
+              <div class="item has-text-centered">
+                <img src="static/images/e2e_bland_altman.png" alt="Bland-Altman plot" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Bland-Altman plot showing bias of −1.8 BPM with ±1.96 SD limits of agreement.</h2>
+              </div>
+              <div class="item has-text-centered">
+                <img src="static/images/e2e_error_distributions.png" alt="Absolute error distribution: boxplot and histogram" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Absolute error distribution — MAE 6.95 BPM, Median AE 4.65 BPM, P90 18.31 BPM.</h2>
               </div>
             </div>
           </div>
         </div>
       </section>
-      -->
 
     </div>
   </section>
@@ -490,31 +477,38 @@
         </p>
       </div>
 
-      <!-- TODO: Replace placeholder with carousel once images are ready -->
-      <div class="carousel-placeholder">
-        <i class="fas fa-images"></i>
-        <span>Result images coming soon</span>
-      </div>
-
-      <!--
-      Uncomment and populate when images are ready:
-      <section class="hero is-small">
-        <div class="hero-body">
+      <section class="hero is-small" style="margin-top: 1.5rem;">
+        <div class="hero-body" style="padding: 0;">
           <div class="container">
             <div id="carousel-method2" class="carousel results-carousel">
-              <div class="item">
-                <img src="static/images/method2_1.jpg" alt="CNN + signal processing result 1" loading="lazy"/>
-                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              <div class="item has-text-centered">
+                <img src="static/images/cnn_sp_training_curves.png" alt="Contrastive training loss curves" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Contrastive training loss over 50 epochs — total loss, positive/negative components, and mean cosine similarity between same-phase and opposite-phase frame pairs.</h2>
               </div>
-              <div class="item">
-                <img src="static/images/method2_2.jpg" alt="CNN + signal processing result 2" loading="lazy"/>
-                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              <div class="item has-text-centered">
+                <img src="static/images/cnn_sp_bland_altman.png" alt="Bland-Altman plots for all four peak-finding sub-methods" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Bland-Altman plots for all four peak-finding sub-methods. Harmonic Verify (bottom right) achieves the tightest limits of agreement (bias +3.3 BPM, ±1.96 SD: −16.1 to +22.6).</h2>
+              </div>
+              <div class="item has-text-centered">
+                <img src="static/images/cnn_sp_error_distributions.png" alt="Absolute error by method and estimated vs true BPM scatter" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Absolute error distributions across sub-methods (left) and estimated vs. true BPM scatter (right). Harmonic Verify's error distribution is visibly tighter than all alternatives.</h2>
+              </div>
+              <div class="item has-text-centered">
+                <img src="static/images/cnn_sp_similarity_1.png" alt="Sample similarity curve — 75.0 BPM" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Sample periodicity signal for a 75.0 BPM clip. Harmonic Verify correctly identifies the cardiac period while other sub-methods lock onto harmonics.</h2>
+              </div>
+              <div class="item has-text-centered">
+                <img src="static/images/cnn_sp_similarity_2.png" alt="Sample similarity curve — 48.1 BPM" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Sample periodicity signal for a 48.1 BPM clip. All methods converge near the true rate when the similarity signal is clean and well-defined.</h2>
+              </div>
+              <div class="item has-text-centered">
+                <img src="static/images/cnn_sp_similarity_failure.png" alt="Sample similarity curve — failure case, 59.7 BPM" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">A challenging case (true: 59.7 BPM) where the similarity signal is noisy and all sub-methods fail to find the correct period — illustrating the method's remaining error cases.</h2>
               </div>
             </div>
           </div>
         </div>
       </section>
-      -->
 
     </div>
   </section>
@@ -530,31 +524,30 @@
         </p>
       </div>
 
-      <!-- TODO: Replace placeholder with carousel once images are ready -->
-      <div class="carousel-placeholder">
-        <i class="fas fa-images"></i>
-        <span>Result images coming soon</span>
-      </div>
-
-      <!--
-      Uncomment and populate when images are ready:
-      <section class="hero is-small">
-        <div class="hero-body">
+      <section class="hero is-small" style="margin-top: 1.5rem;">
+        <div class="hero-body" style="padding: 0;">
           <div class="container">
             <div id="carousel-method3" class="carousel results-carousel">
-              <div class="item">
-                <img src="static/images/method3_1.jpg" alt="MLP optical flow result 1" loading="lazy"/>
-                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              <div class="item has-text-centered">
+                <img src="static/images/mlr_metrics.png" alt="MLR validation metrics table" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Validation performance at the video level (clip predictions averaged per video). The model achieves better-than-random performance despite its simplicity.</h2>
               </div>
-              <div class="item">
-                <img src="static/images/method3_2.jpg" alt="MLP optical flow result 2" loading="lazy"/>
-                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              <div class="item has-text-centered">
+                <img src="static/images/mlr_pearson.png" alt="Pearson correlations of each feature with heart rate" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Pearson correlations between each feature and heart rate. Mean flow magnitude shows the strongest individual relationship (r = 0.395), consistent with the intuition that faster hearts produce more motion per frame.</h2>
+              </div>
+              <div class="item has-text-centered">
+                <img src="static/images/mlr_std_coefs.png" alt="Standardised regression coefficients" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">Standardised coefficients show the fitted model's weighting of each feature. The sign inversions relative to the Pearson correlations are a consequence of severe multicollinearity rather than true negative relationships.</h2>
+              </div>
+              <div class="item has-text-centered">
+                <img src="static/images/mlr_multicollinearity.png" alt="VIF and inter-feature correlation matrix" loading="lazy" style="max-height:420px; width:auto; margin: 0 auto;"/>
+                <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem; font-size: 0.9rem; color: #555;">All six features are highly correlated with one another (r > 0.67 for every pair), producing VIFs in the hundreds. Individual coefficients should not be interpreted causally — the Pearson correlations are a more reliable guide to each feature's relationship with heart rate.</h2>
               </div>
             </div>
           </div>
         </div>
       </section>
-      -->
 
     </div>
   </section>
@@ -581,14 +574,14 @@
             <td class="metric">4.65</td>
             <td class="metric">18.31</td>
           </tr>
-          <tr class="best-row">
-            <td>CNN + Signal Processing <span class="best-badge">Best</span></td>
+          <tr>
+            <td>CNN + Signal Processing</td>
             <td class="metric">4.07</td>
             <td class="metric">0.96</td>
             <td class="metric">8.02</td>
           </tr>
           <tr>
-            <td>MLP (Optical Flow Features)</td>
+            <td>Multiple Linear Regression (Optical Flow Features)</td>
             <td class="metric">10.07</td>
             <td class="metric">7.96</td>
             <td class="metric">21.23</td>
@@ -609,6 +602,39 @@
   </section>
 
 </main>
+
+<!-- ── ACKNOWLEDGEMENTS ── -->
+<section style="background: var(--light-gray); padding: 3rem 1.5rem;">
+  <div class="container is-max-desktop">
+    <div class="section-eyebrow">Acknowledgements</div>
+    <h2 style="font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--navy); margin-bottom: 1.2rem;">Dataset &amp; Architecture</h2>
+    <div style="font-size: 0.95rem; line-height: 1.8; color: #444;">
+      <p style="margin-bottom: 1rem;">
+        All experiments were conducted on the
+        <a href="https://echonet.github.io/dynamic/" target="_blank" style="color: var(--navy); font-weight: 600;">EchoNet-Dynamic</a>
+        dataset, an open-access collection of apical-4-chamber echocardiographic videos with expert annotations, made available by the
+        Stanford AIMI Center. The dataset is described in:
+      </p>
+      <p style="margin-bottom: 1.5rem; padding-left: 1.2rem; border-left: 3px solid var(--crimson); color: #555; font-size: 0.9rem;">
+        Ouyang, D., He, B., Ghorbani, A., Yuan, N., Ebinger, J., Langlotz, C. P., ... &amp; Zou, J. Y. (2020).
+        Video-based AI for beat-to-beat assessment of cardiac function.
+        <em>Nature</em>, 580(7802), 252–256.
+        <a href="https://doi.org/10.1038/s41586-020-2145-8" target="_blank" style="color: var(--navy);">https://doi.org/10.1038/s41586-020-2145-8</a>
+      </p>
+      <p style="margin-bottom: 1rem;">
+        The CNN backbone used in the end-to-end and CNN + signal processing methods is based on
+        <a href="https://arxiv.org/abs/1512.03385" target="_blank" style="color: var(--navy); font-weight: 600;">ResNet-18</a>,
+        introduced in:
+      </p>
+      <p style="padding-left: 1.2rem; border-left: 3px solid var(--crimson); color: #555; font-size: 0.9rem;">
+        He, K., Zhang, X., Ren, S., &amp; Sun, J. (2016).
+        Deep residual learning for image recognition.
+        In <em>Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</em> (pp. 770–778).
+        <a href="https://arxiv.org/abs/1512.03385" target="_blank" style="color: var(--navy);">arXiv:1512.03385</a>
+      </p>
+    </div>
+  </div>
+</section>
 
 <!-- ── FOOTER ── -->
 <footer class="footer">
