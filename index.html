@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="title" content="ML for Heart Rate Estimation from Echocardiographic Video - Powell Burke">
+  <meta name="description" content="Autonomous heart rate detection from echocardiographic video using three machine learning methods: end-to-end CNN+Transformer, CNN+signal processing, and optical flow MLP.">
+  <meta name="keywords" content="heart rate estimation, echocardiography, cardiac ultrasound, machine learning, optical flow, temporal transformer, signal processing">
+  <meta name="author" content="Powell Burke">
+  <meta name="robots" content="index, follow">
+
+  <title>ML for Heart Rate Estimation from Echocardiographic Video | Powell Burke</title>
+
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+
+  <!-- Critical CSS -->
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <!-- Non-critical CSS -->
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  </noscript>
+
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <style>
+    :root {
+      --navy: #0f1f38;
+      --navy-mid: #1a3257;
+      --crimson: #c0392b;
+      --crimson-light: #e74c3c;
+      --warm-white: #f8f6f1;
+      --light-gray: #eef0f4;
+      --mid-gray: #6b7280;
+      --text-dark: #1a1a2e;
+      --serif: 'Source Serif 4', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: var(--sans);
+      color: var(--text-dark);
+      background: var(--warm-white);
+    }
+
+    /* ── HERO ── */
+    .hero.is-dark.publication-header {
+      background: var(--navy);
+      padding: 4rem 1.5rem 3rem;
+    }
+
+    .publication-title {
+      font-family: var(--serif);
+      font-size: 2.2rem !important;
+      font-weight: 700;
+      line-height: 1.25;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .publication-authors {
+      margin-top: 1.2rem;
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .publication-authors a {
+      color: rgba(255,255,255,0.95);
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      transition: border-color 0.2s;
+    }
+
+    .publication-authors a:hover {
+      border-color: rgba(255,255,255,0.9);
+    }
+
+    .author-block { display: inline; }
+
+    .institution-line {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.65);
+      font-style: italic;
+    }
+
+    .advisor-line {
+      margin-top: 0.3rem;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.55);
+    }
+
+    /* GitHub button */
+    .publication-links {
+      margin-top: 1.8rem;
+    }
+
+    .link-block .button {
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.03em;
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      color: #fff;
+      padding: 0.5rem 1.2rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .link-block .button:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.9);
+    }
+
+    /* ── SECTION LABELS ── */
+    .section-eyebrow {
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--crimson);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── ABSTRACT ── */
+    .abstract-section {
+      background: #ffffff;
+      padding: 4rem 1.5rem;
+      border-top: 3px solid var(--crimson);
+    }
+
+    .abstract-section .title.is-3 {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1.2rem;
+    }
+
+    .abstract-section p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #333;
+      text-align: justify;
+    }
+
+    /* ── METHODOLOGY SECTIONS ── */
+    .methodology-section {
+      padding: 3.5rem 1.5rem;
+    }
+
+    .methodology-section.alt-bg {
+      background: var(--light-gray);
+    }
+
+    .methodology-section .method-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .method-number {
+      display: inline-block;
+      font-family: var(--serif);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--crimson);
+      border: 1.5px solid var(--crimson);
+      border-radius: 2px;
+      padding: 0.1rem 0.5rem;
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.05em;
+    }
+
+    .method-title {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.3;
+      margin-bottom: 0.8rem;
+    }
+
+    .method-description {
+      font-size: 0.97rem;
+      line-height: 1.7;
+      color: #444;
+      max-width: 680px;
+    }
+
+    /* carousel placeholder styling */
+    .carousel-placeholder {
+      background: var(--navy-mid);
+      border-radius: 6px;
+      height: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.5);
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      border: 2px dashed rgba(255,255,255,0.15);
+    }
+
+    .carousel-placeholder i {
+      font-size: 2rem;
+      opacity: 0.4;
+    }
+
+    /* actual carousel overrides */
+    .results-carousel .item img {
+      border-radius: 4px;
+    }
+
+    /* ── RESULTS TABLE ── */
+    .results-section {
+      background: var(--navy);
+      padding: 4rem 1.5rem;
+    }
+
+    .results-section .section-title {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+
+    .results-section .section-subtitle {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 2rem;
+    }
+
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--sans);
+    }
+
+    .results-table thead tr {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .results-table th {
+      padding: 0.85rem 1.2rem;
+      text-align: left;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .results-table td {
+      padding: 1rem 1.2rem;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.85);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .results-table tr.best-row td {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .results-table tr.best-row td:first-child {
+      border-left: 3px solid var(--crimson);
+    }
+
+    .results-table td.metric {
+      font-variant-numeric: tabular-nums;
+      font-family: 'Courier New', monospace;
+      font-size: 1.05rem;
+    }
+
+    .best-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--crimson);
+      color: white;
+      border-radius: 2px;
+      padding: 0.1rem 0.4rem;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* ── POSTER ── */
+    .poster-section {
+      background: var(--warm-white);
+      padding: 4rem 1.5rem;
+    }
+
+    .poster-section .section-heading {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+    }
+
+    .poster-section iframe {
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    /* ── FOOTER ── */
+    footer.footer {
+      background: var(--navy);
+      padding: 2rem 1.5rem;
+    }
+
+    footer.footer p {
+      color: rgba(255,255,255,0.45);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    footer.footer a {
+      color: rgba(255,255,255,0.65);
+      text-decoration: underline;
+    }
+
+    /* ── SCROLL TO TOP ── */
+    .scroll-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      z-index: 100;
+      transition: background 0.2s;
+    }
+
+    .scroll-to-top:hover { background: var(--navy-mid); }
+    .scroll-to-top.visible { display: flex; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .publication-title { font-size: 1.5rem !important; }
+      .results-table th, .results-table td { padding: 0.6rem 0.7rem; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<button class="scroll-to-top" id="scrollToTopBtn" title="Scroll to top" aria-label="Scroll to top">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<main id="main-content">
+
+  <!-- ── HERO ── -->
+  <section class="hero is-dark publication-header">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+
+            <div class="section-eyebrow">ECE 465 · University at Albany</div>
+
+            <h1 class="title is-1 publication-title">
+              Machine Learning for Heart Rate Estimation<br>from Echocardiographic Video Clips
+            </h1>
+
+            <div class="publication-authors">
+              <span class="author-block">Powell Burke</span>
+            </div>
+
+            <div class="advisor-line">
+              Advised by Professor Hany Elgala
+            </div>
+            <div class="institution-line">
+              College of Nanotechnology, Science, and Engineering · University at Albany, SUNY
+            </div>
+
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://github.com/YOUR_REPO_HERE" target="_blank"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABSTRACT ── -->
+  <section class="abstract-section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Machine learning is increasingly being applied to echocardiographic video analysis for tasks such as cardiac view classification, cardiac feature detection, and image labeling. Video of the heart poses a challenge that deep networks struggle with: temporal rate variance. Hearts which look physiologically similar produce different signals for networks to learn from when beating at different rates, making learning more difficult. Even when models can handle this rate variance to some extent, they require more training data and compute resources to do so, with the former being highly constrained in many medical settings. To address this, this project attempts to automate heart rate estimation from echocardiographic video clips. This allows frames to be sampled at consistent cardiac cycle intervals, normalizing temporal rate and preventing temporal aliasing.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── METHOD 1: End-to-End CNN + Transformer ── -->
+  <section class="methodology-section">
+    <div class="container is-max-desktop">
+      <div class="method-header">
+        <div class="method-number">Method 01</div>
+        <h2 class="method-title">End-to-End Learning — CNN + Temporal Transformer</h2>
+        <p class="method-description">
+          A ResNet-18 CNN was modified to accept a 2-channel optical flow input and output a 512-dimensional embedding vector per frame. 100 frames per video were processed, with each embedding becoming a token in a temporal transformer layer prepended with a CLS token. The CLS token then projects linearly to a heart rate prediction, enabling fully end-to-end training from raw optical flow to BPM output.
+        </p>
+      </div>
+
+      <!-- TODO: Replace placeholder with carousel once images are ready -->
+      <div class="carousel-placeholder">
+        <i class="fas fa-images"></i>
+        <span>Result images coming soon</span>
+      </div>
+
+      <!--
+      Uncomment and populate when images are ready:
+      <section class="hero is-small">
+        <div class="hero-body">
+          <div class="container">
+            <div id="carousel-method1" class="carousel results-carousel">
+              <div class="item">
+                <img src="static/images/method1_1.jpg" alt="End-to-end method result 1" loading="lazy"/>
+                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              </div>
+              <div class="item">
+                <img src="static/images/method1_2.jpg" alt="End-to-end method result 2" loading="lazy"/>
+                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      -->
+
+    </div>
+  </section>
+
+  <!-- ── METHOD 2: CNN + Signal Processing ── -->
+  <section class="methodology-section alt-bg">
+    <div class="container is-max-desktop">
+      <div class="method-header">
+        <div class="method-number">Method 02</div>
+        <h2 class="method-title">CNN per Frame + Signal Processing over Embeddings</h2>
+        <p class="method-description">
+          The same ResNet-18 architecture was trained using a contrastive objective — maximizing similarity between frame embeddings at the same cardiac phase, and minimizing similarity at frames offset by half a cycle. At inference, frame embeddings are extracted and pairwise self-similarity is computed. The average similarity at each inter-frame interval constructs a periodicity signal whose peaks correspond to the heart rate period and its harmonics.
+        </p>
+      </div>
+
+      <!-- TODO: Replace placeholder with carousel once images are ready -->
+      <div class="carousel-placeholder">
+        <i class="fas fa-images"></i>
+        <span>Result images coming soon</span>
+      </div>
+
+      <!--
+      Uncomment and populate when images are ready:
+      <section class="hero is-small">
+        <div class="hero-body">
+          <div class="container">
+            <div id="carousel-method2" class="carousel results-carousel">
+              <div class="item">
+                <img src="static/images/method2_1.jpg" alt="CNN + signal processing result 1" loading="lazy"/>
+                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              </div>
+              <div class="item">
+                <img src="static/images/method2_2.jpg" alt="CNN + signal processing result 2" loading="lazy"/>
+                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      -->
+
+    </div>
+  </section>
+
+  <!-- ── METHOD 3: MLP + Optical Flow Features ── -->
+  <section class="methodology-section">
+    <div class="container is-max-desktop">
+      <div class="method-header">
+        <div class="method-number">Method 03</div>
+        <h2 class="method-title">Multiple Linear Regression with Optical Flow Features</h2>
+        <p class="method-description">
+          Optical flow was computed for up to 400 frames per video. Per-pixel statistical features were extracted across all optical flow frames — mean, 90th percentile, 95th percentile, 99th percentile, 99.9th percentile, and standard deviation. These hand-crafted features were used to train a multiple linear regression model to predict heart rate, serving as a classical baseline against the learned approaches.
+        </p>
+      </div>
+
+      <!-- TODO: Replace placeholder with carousel once images are ready -->
+      <div class="carousel-placeholder">
+        <i class="fas fa-images"></i>
+        <span>Result images coming soon</span>
+      </div>
+
+      <!--
+      Uncomment and populate when images are ready:
+      <section class="hero is-small">
+        <div class="hero-body">
+          <div class="container">
+            <div id="carousel-method3" class="carousel results-carousel">
+              <div class="item">
+                <img src="static/images/method3_1.jpg" alt="MLP optical flow result 1" loading="lazy"/>
+                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              </div>
+              <div class="item">
+                <img src="static/images/method3_2.jpg" alt="MLP optical flow result 2" loading="lazy"/>
+                <h2 class="subtitle has-text-centered">Caption here.</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      -->
+
+    </div>
+  </section>
+
+  <!-- ── RESULTS ── -->
+  <section class="results-section">
+    <div class="container is-max-desktop">
+      <div class="section-eyebrow" style="color: rgba(255,255,255,0.4);">Quantitative Evaluation</div>
+      <h2 class="section-title">Results</h2>
+      <p class="section-subtitle">All methods evaluated on the Stanford EchoNet-Dynamic dataset. Lower is better.</p>
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>MAE (BPM)</th>
+            <th>Median AE (BPM)</th>
+            <th>P90 AE (BPM)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>End-to-End (CNN + Transformer)</td>
+            <td class="metric">6.95</td>
+            <td class="metric">4.65</td>
+            <td class="metric">18.31</td>
+          </tr>
+          <tr class="best-row">
+            <td>CNN + Signal Processing <span class="best-badge">Best</span></td>
+            <td class="metric">4.07</td>
+            <td class="metric">0.96</td>
+            <td class="metric">8.02</td>
+          </tr>
+          <tr>
+            <td>MLP (Optical Flow Features)</td>
+            <td class="metric">10.07</td>
+            <td class="metric">7.96</td>
+            <td class="metric">21.23</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── POSTER ── -->
+  <section class="poster-section">
+    <div class="container is-max-desktop">
+      <div class="section-eyebrow">Showcase</div>
+      <h2 class="section-heading">Poster</h2>
+      <iframe src="static/pdfs/ECE_465_Showcase_Poster.pdf" width="100%" height="600">
+      </iframe>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>,
+            adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            Licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll to top
+  const btn = document.getElementById('scrollToTopBtn');
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  });
+  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+
+</body>
+</html>
